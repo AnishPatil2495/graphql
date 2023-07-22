@@ -5,11 +5,15 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import { useNavigate } from "react-router-dom";
 import { DELETE_BOOKS_DATA_QUERY } from "../../container/Home/function/common";
 import { useMutation } from "@apollo/client";
+import { addEditBook } from "../../modules/reducer";
+import { useDispatch } from "react-redux";
 
 const BookDisplayCard = ({ bookData }) => {
   const navigate = useNavigate()
   const [deleteBookQuery, { loading, error, data }] = useMutation(DELETE_BOOKS_DATA_QUERY)
+  const dispatch = useDispatch()
   const handleEdit = () => {
+    dispatch(addEditBook(bookData))
     navigate("/editbook")
   }
   const handleDelete = () => {

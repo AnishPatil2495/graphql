@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Stack, TextField, Typography, Button, RadioGroup, FormControlLabel, FormControl, Radio } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { EDIT_BOOKS_DATA_QUERY } from "../../container/Home/function/common";
+import { useMutation } from "@apollo/client";
 
 const EditBookComponent = () => {
   const [payLoad, setPayLoad] = useState({
@@ -8,7 +11,7 @@ const EditBookComponent = () => {
     name: "",
     auther: "",
     price: "",
-    availability: "True",
+    availability: true,
     introduction: "",
   })
   const navigate = useNavigate()
@@ -18,8 +21,24 @@ const EditBookComponent = () => {
     payLoad[key] = value
     setPayLoad({ ...payLoad })
   }
+  const bookData = useSelector(state => state.books.editBook)
+  useEffect(() => {
+    console.log("first", bookData)
+    setPayLoad({ ...bookData })
+  }, [])
+  const [editBookQuery, { loading, error, data }] = useMutation(EDIT_BOOKS_DATA_QUERY)
   const handleSave = () => {
     console.log("EditBookComponent", payLoad)
+    editBookQuery({
+      variables: {
+        id: payLoad.id,
+        name: payLoad.name,
+        auther: payLoad.auther,
+        price: parseInt(payLoad.price),
+        availability: payLoad.availability,
+        introduction: payLoad.introduction
+      }
+    });
   }
   const handleCancle = () => {
     setPayLoad({
@@ -27,7 +46,7 @@ const EditBookComponent = () => {
       name: "",
       auther: "",
       price: "",
-      availability: "True",
+      availability: true,
       introduction: "",
     })
   }
@@ -50,8 +69,8 @@ const EditBookComponent = () => {
             value={payLoad.availability}
             onChange={handleChange}
           >
-            <FormControlLabel value="True" control={<Radio />} label="True" />
-            <FormControlLabel value="False" control={<Radio />} label="False" />
+            <FormControlLabel value={true} control={<Radio />} label="True" />
+            <FormControlLabel value={false} control={<Radio />} label="False" />
           </RadioGroup>
         </FormControl>
         <Typography sx={{ textAlign: "left" }}>Introduction</Typography>
